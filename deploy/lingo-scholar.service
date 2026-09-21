@@ -1,0 +1,24 @@
+[Unit]
+Description=Lingo Scholar private learning service
+After=network.target
+
+[Service]
+Type=simple
+User=lingo
+Group=lingo
+WorkingDirectory=/opt/lingo-scholar
+EnvironmentFile=/etc/lingo-scholar.env
+ExecStart=/usr/local/bin/node apps/server/src/start.js
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/lingo-scholar/data /opt/lingo-scholar/LingoScholar
+MemoryMax=1500M
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

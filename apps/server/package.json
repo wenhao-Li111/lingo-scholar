@@ -1,0 +1,13 @@
+{
+  "name": "@lingo/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/start.js",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "optionalDependencies": {
+    "vosk": "^0.3.39"
+  }
+}

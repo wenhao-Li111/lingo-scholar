@@ -1,0 +1,6 @@
+[Unit]
+Description=Renew Lingo Scholar short-lived IP certificate
+
+[Service]
+Type=oneshot
+ExecStart=/opt/lingo-certbot/bin/certbot renew --quiet --deploy-hook "/usr/bin/systemctl reload nginx"

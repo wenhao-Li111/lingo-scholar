@@ -1,0 +1,31 @@
+{
+  "name": "lingo-scholar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted contextual vocabulary learning, private IELTS library and friend star challenges",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "workspaces": [
+    "packages/domain",
+    "packages/content",
+    "apps/server",
+    "apps/web",
+    "services/voice"
+  ],
+  "devDependencies": {
+    "playwright-core": "^1.63.0"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "start": "node apps/server/src/start.js",
+    "build:web": "node scripts/build-web.mjs",
+    "demo": "node scripts/demo-content.mjs",
+    "test": "npm run test:unit && node --test tests/integration/cloud-social.test.mjs",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "db:backup": "node scripts/cloud-backup.mjs",
+    "bootstrap-token": "node scripts/issue-bootstrap.mjs"
+  }
+}

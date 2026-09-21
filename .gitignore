@@ -1,0 +1,17 @@
+node_modules/
+/data/
+/content/
+/LingoScholar/
+dist/
+apps/web/dist/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.db*
+*.log
+.DS_Store
+Thumbs.db
+services/voice/bin/
+services/voice/models/

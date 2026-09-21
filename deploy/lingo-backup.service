@@ -1,0 +1,11 @@
+[Unit]
+Description=Consistent SQLite backup for Lingo Scholar
+
+[Service]
+Type=oneshot
+User=lingo
+Group=lingo
+WorkingDirectory=/opt/lingo-scholar
+EnvironmentFile=/etc/lingo-scholar.env
+UMask=0077
+ExecStart=/usr/local/bin/node scripts/cloud-backup.mjs

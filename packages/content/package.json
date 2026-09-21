@@ -1,0 +1,13 @@
+{
+  "name": "@lingo/content",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./schema": "./src/schema.js",
+    "./coverage": "./src/coverage.js",
+    "./load": "./src/load.js"
+  }
+}
