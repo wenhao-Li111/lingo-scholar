@@ -109,8 +109,10 @@ export function buildRouter({ clock }) {
       return res.status(409).json({ error: 'ALREADY_BOOTSTRAPPED', message: '管理员已创建，请使用邀请加入' });
     }
     try {
-      consumeBootstrap(token);
-      const user = createUser({ email, displayName, password, role: 'admin' });
+      const user = tx(() => {
+        consumeBootstrap(token);
+        return createUser({ email, displayName, password, role: 'admin' });
+      });
       run('UPDATE users SET plan_started_at = ? WHERE id = ?', [nowIso(), user.id]);
       const group = ensureGroupFor(user.id, groupName);
       const session = createSession(user.id, req.headers['user-agent']);

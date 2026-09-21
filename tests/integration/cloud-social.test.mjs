@@ -31,6 +31,10 @@ test('cloud registration, recovery, friend privacy, authoritative scoring and cr
     assert.ok(wrongQuestions.every(q=>!questions.some(old=>old.word.lemma===q.word.lemma)));
     for(let i=0;i<20;i++)await a.post(`/api/stars/challenges/${badId}/answer`,{index:i,optionId:wrongQuestions[i].options.find(o=>!o.correct).id});
     assert.equal((await a.get('/api/social')).body.stars,8);
+    const bChallenge=(await b.post('/api/stars/challenges')).body.id;
+    const bQuestions=JSON.parse(get('SELECT questions_json FROM star_challenges WHERE id=?',[bChallenge]).questions_json);
+    for(let i=0;i<20;i++)await b.post(`/api/stars/challenges/${bChallenge}/answer`,{index:i,optionId:bQuestions[i].options.find(o=>!o.correct).id});
+    assert.equal((await b.get('/api/social')).body.stars,0,'Penalty cannot make total balance negative');
     const recovery=await stranger.post('/api/auth/recover',{email:'alice@example.com',code:accountA.recoveryCode,password:'CloudMeadow382'});assert.equal(recovery.status,200);assert.notEqual(recovery.body.recoveryCode,accountA.recoveryCode);assert.equal((await a.get('/api/me')).status,401);
     assert.equal((await stranger.post('/api/auth/recover',{email:'alice@example.com',code:accountA.recoveryCode,password:'CloudMeadow384'})).status,400);
     b.setCsrf('invalid');assert.equal((await b.post('/api/auth/logout',{})).status,403);
