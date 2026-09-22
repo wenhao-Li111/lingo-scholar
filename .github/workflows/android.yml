@@ -10,18 +10,22 @@ permissions:
   contents: read
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - uses: android-actions/setup-android@v3
-      - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      # The hosted runner already includes SDK 35. Avoid a second SDK bootstrap
+      # and its external download dependency; fail clearly if the image changes.
+      - name: Verify preinstalled Android SDK
+        run: |
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
+          test -x "$ANDROID_HOME/build-tools/35.0.0/aapt2"
       - run: node scripts/build-android.mjs --unsigned
       - uses: actions/upload-artifact@v4
         with:
