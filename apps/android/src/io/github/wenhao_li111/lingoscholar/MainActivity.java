@@ -45,13 +45,18 @@ public final class MainActivity extends Activity {
         text(body, "每天 20 个词\n把单词记进句子，把进步留在每一天。", 18, false);
         button(body, "开始 / 继续学习 →", () -> open(STUDY), true);
         button(body, "网站入口与使用说明", () -> open(GUIDE), false);
+        TextView updateStatus=new TextView(this);updateStatus.setTextColor(GREEN);updateStatus.setText("安装版更新由你确认；网页更新无需重装。");
+        AppUpdater updater=new AppUpdater(this,updateStatus);
+        button(body,"检查更新",updater::check,false);
+        button(body,"安装已下载更新",updater::install,false);
+        body.addView(updateStatus);
         text(body, "01  在语境中记忆", 22, true);
         text(body, "词义四选一、看义拼写、听音默写。答完对照例句和翻译。", 16, false);
         text(body, "02  换设备，接着学", 22, true);
         text(body, "使用同一邮箱登录。保持联网，让词库、收藏和听读进度从云端同步。", 16, false);
         text(body, "03  和好友一起进步", 22, true);
         text(body, "邮箱添加好友，用正确率积累星星。", 16, false);
-        text(body, "安卓轻量安装版 · 1.0.0\n学习在系统浏览器支持的应用内页面中打开；不支持时会打开浏览器。需要联网和支持 HTTPS 的浏览器。\n\n没有离线教材包，不是完全原生学习引擎。APK 本身不保存密码，不申请通讯录、存储或录音权限。", 13, false);
+        text(body, "安卓轻量安装版 · 1.1.0\n学习在系统浏览器支持的应用内页面中打开；不支持时会打开浏览器。需要联网和支持 HTTPS 的浏览器。\n\n没有离线教材包。新增网络和请求安装权限，仅用于你发起的版本检查、下载和确认安装；不申请通讯录、存储或录音权限。", 13, false);
         setContentView(scroll);
     }
 

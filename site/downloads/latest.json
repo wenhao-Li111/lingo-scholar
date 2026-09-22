@@ -1,0 +1,8 @@
+{
+  "versionName": "1.1.0",
+  "versionCode": 2,
+  "file": "lingo-scholar-1.1.0.apk",
+  "sha256": "5875cb3f4bcbc49201094057868dfaf7c3c57fc09925fa6e135ef5111a1cc6be",
+  "bytes": 20954,
+  "notes": "新增应用内检查更新、下载校验与系统确认安装。"
+}

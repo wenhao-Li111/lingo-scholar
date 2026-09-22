@@ -2,9 +2,21 @@
 
 ## 安卓轻量安装版构建
 
+发布新安装版时递增 AndroidManifest.xml 的 versionCode 与 versionName，运行构建脚本。脚本生成对应 APK、SHA256SUMS.txt 和 latest.json；将三者一并发布到 `site/downloads/`，Pages 上线后应用内检查即可发现新版。签名私钥不得放入 GitHub，CI 仅构建未签名检查产物；不是每次 GitHub Release 都自动生成签名 APK。
+
+## 正式 Release 自动部署
+
+推送经过审核的 `vX.Y.Z` 注释标签，release.yml 先测试和构建，再创建正式 GitHub Release；也可在 GitHub 手动发布对应正式 Release。服务器的 root-owned 控制器每约五分钟拉取最新正式 Release，不使用 GitHub SSH 私钥或访问令牌。仓库发布权因此等同网站部署权，请保护账号与发布权限。
+
+服务器安装：审核 `deploy/` 下的 release-poller.mjs、两个 systemd 单元、release-working-directory.conf 和 install-release-poller.sh，上传到同一临时目录，以 sudo 运行安装脚本。它保留 `/opt/lingo-scholar` 的数据、内容和旧运行文件；新版本位于 `/opt/lingo-releases`，`/opt/lingo-current` 指向当前代码，应用 WorkingDirectory 通过 systemd drop-in 切换。npm 构建以独立低权限 lingobuild 用户执行，切换前收回代码目录写权限。不会在 root 身份下执行仓库 npm 脚本。
+
+运行状态：`sudo cat /var/lib/lingo-deploy/status.json`；日志：`sudo journalctl -u lingo-release-poller.service`。暂停：`sudo systemctl stop lingo-release-poller.timer`。失败版本 ID 会记住，避免不断重试；请发布修正版本。保留版本不自动清理，定期检查磁盘。健康失败只自动回退代码，不恢复数据库，以免丢失新写入；破坏性数据库迁移必须另行维护，不能依赖自动回滚。
+
+控制器安装在 `/usr/local/lib/lingo-deploy`，不会随公开仓库版本自行替换。修改控制器必须重新审核并由管理员安装。
+
 源码在 `apps/android`。安装 JDK 17 与 Android SDK 的 `platforms;android-35`、`build-tools;35.0.0`，设置 `JAVA_HOME` 和 `ANDROID_HOME` 后运行 `node scripts/build-android.mjs`。无需 Gradle 或第三方 Java 依赖。
 
-输出为 `dist/android/lingo-scholar-1.0.0.apk` 与 SHA-256 校验文件。默认首次在 `data/deploy-private/android-signing` 创建签名密钥和密码；该目录必须保持私密并异地备份。也可用 `LINGO_ANDROID_KEY_DIR` 指定受限目录。之后使用同一密钥才能覆盖升级，切勿将密钥、密码或签名文件提交 Git。
+输出为 `dist/android/lingo-scholar-1.1.0.apk` 与 SHA-256 校验文件。默认首次在 `data/deploy-private/android-signing` 创建签名密钥和密码；该目录必须保持私密并异地备份。也可用 `LINGO_ANDROID_KEY_DIR` 指定受限目录。之后使用同一密钥才能覆盖升级，切勿将密钥、密码或签名文件提交 Git。
 
 CI 只运行 `node scripts/build-android.mjs --unsigned` 检查构建，不持有发布密钥；CI 的 unsigned artifact 不能直接安装。对外下载只提供维护者本地签名并验证的 APK。它是 Custom Tabs 在线伴随应用，不是 TWA、WebView 内核或离线课程引擎。
 

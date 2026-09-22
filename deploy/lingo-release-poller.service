@@ -1,0 +1,13 @@
+[Unit]
+Description=Deploy new stable Lingo Scholar GitHub releases
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flock -n /var/lib/lingo-deploy/deploy.lock /usr/local/bin/node /usr/local/lib/lingo-deploy/release-poller.mjs
+TimeoutStartSec=1800
+MemoryMax=2200M
+CPUQuota=150%
+Nice=10
+UMask=0022

@@ -1,6 +1,6 @@
 /** Dependency-free Android build. JDK 17 + Android SDK platform/build-tools 35 required.
  * Signing material stays outside the source distribution; never print passwords. */
-import { mkdirSync, mkdtempSync, cpSync, existsSync, writeFileSync, readFileSync, copyFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, cpSync, existsSync, writeFileSync, readFileSync, copyFileSync, readdirSync } from 'node:fs';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { randomBytes, createHash } from 'node:crypto';
@@ -21,6 +21,10 @@ copyFileSync(path.join(sdk, 'platforms', 'android-35', 'android.jar'), platform)
 const source = path.join(out, 'source');
 cpSync(path.join(root, 'apps/android'), source, { recursive: true });
 const destination = path.join(root, 'dist/android');
+const manifestText=readFileSync(path.join(source,'AndroidManifest.xml'),'utf8');
+const versionName=manifestText.match(/android:versionName="([0-9]+\.[0-9]+\.[0-9]+)"/)[1];
+const versionCode=Number(manifestText.match(/android:versionCode="(\d+)"/)[1]);
+const apkName=`lingo-scholar-${versionName}.apk`;
 mkdirSync(destination, { recursive: true });
 const classes = path.join(out, 'classes');
 mkdirSync(classes, { recursive: true });
@@ -32,7 +36,8 @@ function run(command, args) {
 const unsigned = path.join(out, 'unsigned.apk');
 run(binary('aapt2'), ['compile', '--dir', path.join(source, 'res'), '-o', path.join(out, 'resources.zip')]);
 run(binary('aapt2'), ['link', '-o', unsigned, '-I', platform, '--manifest', path.join(source, 'AndroidManifest.xml'), path.join(out, 'resources.zip')]);
-run(java('javac'), ['-encoding', 'UTF-8', '--release', '8', '-classpath', platform, '-d', classes, path.join(source, 'src/io/github/wenhao_li111/lingoscholar/MainActivity.java')]);
+const javaSource=path.join(source,'src/io/github/wenhao_li111/lingoscholar');
+run(java('javac'), ['-encoding', 'UTF-8', '--release', '8', '-classpath', platform, '-d', classes, ...readdirSync(javaSource).filter(f=>f.endsWith('.java')).map(f=>path.join(javaSource,f))]);
 run(java('jar'), ['cf', path.join(out, 'classes.jar'), '-C', classes, '.']);
 run(java('java'), ['-cp', path.join(bt, 'lib/d8.jar'), 'com.android.tools.r8.D8', '--release', '--min-api', '26', '--lib', platform, '--output', out, path.join(out, 'classes.jar')]);
 run(java('jar'), ['uf', unsigned, '-C', out, 'classes.dex']);
@@ -52,11 +57,12 @@ if (process.argv.includes('--unsigned')) {
     run(java('keytool'), ['-genkeypair', '-keystore', key, '-storetype', 'PKCS12', '-storepass:file', password,
       '-alias', 'lingo-release', '-keyalg', 'RSA', '-keysize', '3072', '-validity', '10000', '-dname', 'CN=Lingo Scholar Android, O=Lingo Scholar, C=CN']);
   }
-  const apk = path.join(out, 'lingo-scholar-1.0.0.apk');
+  const apk = path.join(out, apkName);
   run(java('java'), ['-jar', path.join(bt, 'lib/apksigner.jar'), 'sign', '--ks', key, '--ks-pass', `file:${password}`, '--ks-key-alias', 'lingo-release', '--out', apk, aligned]);
   run(java('java'), ['-jar', path.join(bt, 'lib/apksigner.jar'), 'verify', '--verbose', '--print-certs', apk]);
   const hash = createHash('sha256').update(readFileSync(apk)).digest('hex');
-  copyFileSync(apk, path.join(destination, 'lingo-scholar-1.0.0.apk'));
-  writeFileSync(path.join(destination, 'SHA256SUMS.txt'), `${hash}  lingo-scholar-1.0.0.apk\n`);
-  console.log(`Signed APK: ${path.join(destination, 'lingo-scholar-1.0.0.apk')}\nSHA-256: ${hash}`);
+  copyFileSync(apk, path.join(destination, apkName));
+  writeFileSync(path.join(destination, 'SHA256SUMS.txt'), `${hash}  ${apkName}\n`);
+  writeFileSync(path.join(destination,'latest.json'),JSON.stringify({versionName,versionCode,file:apkName,sha256:hash,bytes:readFileSync(apk).length,notes:'新增应用内检查更新、下载校验与系统确认安装。'},null,2)+'\n');
+  console.log(`Signed APK: ${path.join(destination, apkName)}\nSHA-256: ${hash}`);
 }
