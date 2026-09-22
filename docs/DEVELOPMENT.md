@@ -1,5 +1,13 @@
 # 开发与本地运行
 
+## 安卓轻量安装版构建
+
+源码在 `apps/android`。安装 JDK 17 与 Android SDK 的 `platforms;android-35`、`build-tools;35.0.0`，设置 `JAVA_HOME` 和 `ANDROID_HOME` 后运行 `node scripts/build-android.mjs`。无需 Gradle 或第三方 Java 依赖。
+
+输出为 `dist/android/lingo-scholar-1.0.0.apk` 与 SHA-256 校验文件。默认首次在 `data/deploy-private/android-signing` 创建签名密钥和密码；该目录必须保持私密并异地备份。也可用 `LINGO_ANDROID_KEY_DIR` 指定受限目录。之后使用同一密钥才能覆盖升级，切勿将密钥、密码或签名文件提交 Git。
+
+CI 只运行 `node scripts/build-android.mjs --unsigned` 检查构建，不持有发布密钥；CI 的 unsigned artifact 不能直接安装。对外下载只提供维护者本地签名并验证的 APK。它是 Custom Tabs 在线伴随应用，不是 TWA、WebView 内核或离线课程引擎。
+
 一个以「词在句中」为中心的自托管 IELTS 学习网站。每天背一点，在阅读和听力中认出它，再和熟悉的朋友一起坚持。
 
 React + TypeScript · Express · SQLite · 响应式网页 / PWA
