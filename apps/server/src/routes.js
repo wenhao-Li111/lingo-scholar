@@ -35,7 +35,7 @@ import {
   deckById, publicDeck, resourceById, resourceCatalog, resourceDecks, resourceText, searchResources, listeningCatalog,
 } from './resources.js';
 
-export function buildRouter({ clock }) {
+export function buildRouter({ clock, getStarDecks = resourceDecks }) {
   const router = express.Router();
   const now = () => clock.now();
 
@@ -75,7 +75,7 @@ export function buildRouter({ clock }) {
 
   /* ---------------------------- 健康检查 ---------------------------- */
   studyLibraryRoutes(router,requireAuth,requireWrite,now);
-  cloudSocialRoutes(router,requireAuth,requireWrite,ensureGroupFor,now);
+  cloudSocialRoutes(router,requireAuth,requireWrite,ensureGroupFor,now,getStarDecks);
   router.get('/health', async (req, res) => {
     if(process.env.NODE_ENV==='production')return res.json({ok:true});
     res.json({

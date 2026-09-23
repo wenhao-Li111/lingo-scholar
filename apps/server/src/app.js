@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { buildRouter } from './routes.js';
 import { openDatabase, getDatabase, getMeta, setMeta, nowIso } from './db.js';
 import { importContent, CONTENT_ROOT, contentStats } from './content.js';
-import { RESOURCE_ROOT } from './resources.js';
+import { RESOURCE_ROOT, resourceDecks } from './resources.js';
 import { settleClosedWeeks } from './services/review.js';
 import { cleanupTtsCache } from '../../../services/voice/src/tts.js';
 import { systemClock, fixedClock } from '@lingo/domain';
@@ -22,7 +22,7 @@ export function resolveDbPath() {
   return process.env.LINGO_DB || path.join(PROJECT_ROOT, 'data', 'lingo.db');
 }
 
-export function createApp({ clock = systemClock(), autoSeed = true, dbPath = resolveDbPath() } = {}) {
+export function createApp({ clock = systemClock(), autoSeed = true, dbPath = resolveDbPath(), getStarDecks = resourceDecks } = {}) {
   openDatabase(dbPath);
   const db = getDatabase();
   const app = express();
@@ -95,7 +95,7 @@ export function createApp({ clock = systemClock(), autoSeed = true, dbPath = res
     cleanupTtsCache({ maxAgeHours: 24 });
   } catch { /* ignore */ }
 
-  app.use('/api', buildRouter({ clock }));
+  app.use('/api', buildRouter({ clock, getStarDecks }));
 
   // 前端静态资源（构建产物）；开发时由 Vite 提供
   const webDist = path.join(PROJECT_ROOT, 'apps', 'web', 'dist');

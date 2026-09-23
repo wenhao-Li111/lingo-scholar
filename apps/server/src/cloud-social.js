@@ -11,7 +11,7 @@ const shuffle = items => { const result=[...items]; for(let i=result.length-1;i>
 const fail = (res,status,message) => res.status(status).json({error:'CLOUD_REQUEST_FAILED',message});
 const limit = (req,res,key,count=10) => {const result=rateLimit(`${key}:${req.auth?.user.id||req.ip}`,{limit:count,windowMs:3600000});if(!result.allowed){res.status(429).json({error:'RATE_LIMITED',message:'操作过于频繁，请稍后再试',retryAfter:result.retryAfter});return false;}return true;};
 
-export function cloudSocialRoutes(router,requireAuth,requireWrite,ensureGroupFor,now){
+export function cloudSocialRoutes(router,requireAuth,requireWrite,ensureGroupFor,now,getStarDecks=resourceDecks){
   router.post('/auth/register',(req,res)=>{
     if(!publicSignup())return fail(res,403,'当前未开放注册');
     if(!limit(req,res,'register',12))return;
@@ -74,7 +74,7 @@ export function cloudSocialRoutes(router,requireAuth,requireWrite,ensureGroupFor
     const active=get('SELECT id FROM star_challenges WHERE user_id=? AND result_json IS NULL',[id]);
     if(active)return res.json({id:active.id});
     if(Number(get('SELECT COUNT(*) n FROM star_challenges WHERE user_id=? AND day_key=?',[id,day]).n)>=5)return fail(res,409,'今天的 5 组计星挑战已用完，普通练习不限次数');
-    const words=[...new Map(resourceDecks().flatMap(d=>d.words).map(w=>[w.lemma.toLowerCase(),w])).values()].filter(w=>w.meaningDisplay&&w.exampleZh);
+    const words=[...new Map(getStarDecks().flatMap(d=>d.words).map(w=>[w.lemma.toLowerCase(),w])).values()].filter(w=>w.meaningDisplay&&w.exampleZh);
     const used=new Set(all('SELECT questions_json FROM star_challenges WHERE user_id=? AND day_key=?',[id,day]).flatMap(r=>JSON.parse(r.questions_json).map(q=>q.word.lemma)));
     const selected=shuffle(words.filter(w=>!used.has(w.lemma))).slice(0,20);
     if(selected.length<20)return fail(res,409,'可用词条不足 20 个，请先导入完整词库');

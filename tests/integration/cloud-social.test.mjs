@@ -5,7 +5,12 @@ import {get} from '../../apps/server/src/db.js';
 
 test('cloud registration, recovery, friend privacy, authoritative scoring and cross-device resume',async()=>{
   process.env.LINGO_PUBLIC_SIGNUP='1';
-  const h=await startHarness({seed:false});
+  // This test must work in the source-only distribution, without private study content.
+  const testWords=Array.from({length:40},(_,index)=>({
+    lemma:`testword${index+1}`,partOfSpeech:'n.',meaningDisplay:`n. 测试词义 ${index+1}`,
+    exampleZh:`这是第 ${index+1} 个测试词的例句。`,phonetic:'',
+  }));
+  const h=await startHarness({seed:false,getStarDecks:()=>[{id:'test-stars',words:testWords}]});
   try{
     const a=h.client,b=makeClient(h.baseUrl),stranger=makeClient(h.baseUrl);
     const signup=async(c,email)=>{const r=await c.post('/api/auth/register',{email,password:'MountainRiver79',displayName:email.split('@')[0],role:'admin'});assert.equal(r.status,200);assert.equal(r.body.user.role,'member');assert.equal(r.body.emailVerified,false);c.setCsrf(r.body.csrfToken);return r.body;};

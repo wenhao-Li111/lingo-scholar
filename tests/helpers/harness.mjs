@@ -13,11 +13,11 @@ import { fixedClock } from '@lingo/domain';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-export async function startHarness({ startTime = '2026-09-21T09:00:00+08:00', timeZone = 'Asia/Shanghai', seed = true } = {}) {
+export async function startHarness({ startTime = '2026-09-21T09:00:00+08:00', timeZone = 'Asia/Shanghai', seed = true, getStarDecks } = {}) {
   const dir = mkdtempSync(path.join(tmpdir(), 'lingo-test-'));
   const dbPath = path.join(dir, 'test.db');
   const clock = fixedClock(startTime, timeZone);
-  const app = createApp({ clock, autoSeed: false, dbPath });
+  const app = createApp({ clock, autoSeed: false, dbPath, getStarDecks });
   if (seed) await importContent({ contentRoot: CONTENT_ROOT });
   const server = await new Promise((resolve) => {
     const s = app.listen(0, '127.0.0.1', () => resolve(s));
