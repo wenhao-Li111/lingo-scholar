@@ -1,0 +1,32 @@
+/* A consistent rhythm for daily vocabulary and its answer motion. */
+.daily-vocabulary .resource-deck-head{grid-template-columns:minmax(0,1fr);padding:10px 4px 20px;text-align:left;max-width:850px;margin-inline:auto}
+.daily-vocabulary .resource-deck-head h1{font-size:clamp(25px,3vw,35px);line-height:1.35;letter-spacing:-.035em}
+.daily-vocabulary .resource-deck-head p{display:block;font-size:13px;line-height:1.7;margin-top:5px}
+.resource-deck-shell:not(.daily-vocabulary) .resource-deck-head{max-width:850px;margin-inline:auto;grid-template-columns:auto minmax(0,1fr);justify-content:start;gap:18px}
+.resource-deck-shell:not(.daily-vocabulary) .resource-deck-head h1{font-size:clamp(21px,2.3vw,28px);line-height:1.4}
+.resource-deck-shell:not(.daily-vocabulary) .practice-toolbar{max-width:850px;margin:20px auto 24px}
+.daily-vocabulary .context-stage{padding:clamp(24px,4vw,42px);min-height:570px}
+.daily-vocabulary .context-word{margin:24px 0 12px;gap:10px}
+.daily-vocabulary .context-word h2{line-height:1.18;letter-spacing:-.035em;max-width:100%}
+.daily-vocabulary .context-word h2:not(.serif){font-size:clamp(25px,3vw,35px);line-height:1.55;letter-spacing:0;font-weight:650}
+.daily-vocabulary .source-word-progress{font-variant-numeric:tabular-nums}
+.meaning-answer-slot{width:min(100%,680px);min-height:88px;display:grid;place-items:center;margin:5px auto 0}
+.meaning-answer-slot:empty{height:0;min-height:0;margin:0}
+.meaning-answer-card{width:100%;min-height:88px;padding:14px 20px;border:1px solid #abc6b0;border-radius:18px;background:#e8f2e8;box-shadow:0 16px 34px #315d431c;display:grid;align-content:center;gap:5px;text-align:left}
+.meaning-answer-card>span{font-size:11px;letter-spacing:.14em;color:#547461;font-weight:700}
+.meaning-answer-card strong{white-space:pre-line;overflow-wrap:anywhere;font-size:clamp(16px,2vw,21px);line-height:1.55;color:#193e36;font-weight:650}
+.meaning-hint{text-align:center;color:#6b796d;font-size:13px;min-height:22px;margin:10px 0 0}
+.meaning-options button.is-wrong,.meaning-options button.is-wrong:disabled{border-color:#d78f86;background:#fff0ed;color:#9c413b;opacity:1;cursor:default}
+.meaning-options button.is-wrong span{border-color:#d78f86;color:#9c413b}
+.meaning-options.is-revealing button{opacity:0;transform:translateY(8px);pointer-events:none}
+.meaning-options button{min-width:0;transition:transform .24s ease,background .24s ease,border-color .24s ease,opacity .24s ease}
+.meaning-options strong{font-size:clamp(14px,1.5vw,16px);line-height:1.55;font-weight:550}
+.meaning-flying{position:fixed!important;z-index:1000;margin:0!important;display:flex;align-items:center;gap:14px;padding:16px 20px;border:1px solid #abc6b0!important;border-radius:18px;background:#e8f2e8!important;color:#193e36!important;box-sizing:border-box;pointer-events:none;overflow:hidden;white-space:pre-line}
+.meaning-flying span{display:none}
+.meaning-flying strong{font-size:clamp(14px,1.5vw,18px);line-height:1.45;overflow:hidden}
+.daily-spelling-cta{min-height:58px;min-width:min(100%,270px);margin-block:18px!important}
+.daily-vocabulary .practice-context>p.serif{font-family:Georgia,"Times New Roman",serif}
+.brand-mark{font-family:Inter,"Segoe UI",Arial,sans-serif;font-weight:800;letter-spacing:-.055em}
+.brand-dot{color:#ad8748}
+@media(max-width:600px){.daily-vocabulary .resource-deck-head p{display:block}.daily-vocabulary .context-stage{padding:24px 16px}.daily-vocabulary .context-word{margin:24px 0 8px}.meaning-answer-slot{min-height:82px}.meaning-answer-slot:empty{min-height:0}.meaning-answer-card{min-height:76px}.meaning-options{margin-top:15px}.meaning-options button{min-height:66px}.daily-vocabulary .source-word-finished{padding:18px 4px}.resource-deck-shell:not(.daily-vocabulary) .resource-deck-head{grid-template-columns:1fr;gap:10px}.resource-deck-shell:not(.daily-vocabulary) .resource-deck-head>button:first-child{grid-column:auto}.resource-deck-shell:not(.daily-vocabulary) .resource-deck-head h1{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.meaning-options button{transition:none}.meaning-flying{animation:none}}

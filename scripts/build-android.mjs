@@ -63,6 +63,6 @@ if (process.argv.includes('--unsigned')) {
   const hash = createHash('sha256').update(readFileSync(apk)).digest('hex');
   copyFileSync(apk, path.join(destination, apkName));
   writeFileSync(path.join(destination, 'SHA256SUMS.txt'), `${hash}  ${apkName}\n`);
-  writeFileSync(path.join(destination,'latest.json'),JSON.stringify({versionName,versionCode,file:apkName,sha256:hash,bytes:readFileSync(apk).length,notes:'新增应用内检查更新、下载校验与系统确认安装。'},null,2)+'\n');
+  writeFileSync(path.join(destination,'latest.json'),JSON.stringify({versionName,versionCode,file:apkName,sha256:hash,bytes:readFileSync(apk).length,notes:'IELTS 简约图标；背词错选标红、答对动画与每日乱序默写。'},null,2)+'\n');
   console.log(`Signed APK: ${path.join(destination, apkName)}\nSHA-256: ${hash}`);
 }

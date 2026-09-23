@@ -2,7 +2,7 @@
 /**
  * 生成 PWA 的真实 PNG 图标（192 / 512 / maskable-512）。
  * 不依赖任何第三方图形库：直接构建 RGBA 像素并用 zlib 编码 PNG。
- * 图形：暖纸白底 + 深松绿双语书页 + 低饱和金色书签。
+ * 图形：深松绿底色上的简约 IELTS 字样与低饱和金色细线。
  */
 
 import { deflateSync } from 'node:zlib';
@@ -77,8 +77,8 @@ function makeCanvas(size) {
     roundRect(x0, y0, w, h, r, color) {
       for (let y = Math.round(y0); y < Math.round(y0 + h); y += 1) {
         for (let x = Math.round(x0); x < Math.round(x0 + w); x += 1) {
-          const dx = Math.min(Math.max(x0 + r - x, x - (x0 + w - 1 - r)), 0);
-          const dy = Math.min(Math.max(y0 + r - y, y - (y0 + h - 1 - r)), 0);
+          const dx = Math.max(x0 + r - x, x - (x0 + w - 1 - r), 0);
+          const dy = Math.max(y0 + r - y, y - (y0 + h - 1 - r), 0);
           if (dx * dx + dy * dy <= r * r) this.set(x, y, color);
         }
       }
@@ -94,31 +94,28 @@ function makeCanvas(size) {
   };
 }
 
-/** 绘制双页书 + 金色书签 */
+/** Restrained IELTS wordmark: no borrowed exam-board logo or external font. */
 function draw(size, { maskable = false } = {}) {
   const c = makeCanvas(size);
   const u = size / 512;
-  c.fill(maskable ? PINE : PAPER);
-  const ink = maskable ? PAPER : PINE;
-  const ink2 = maskable ? [0xdc, 0xe7, 0xe1, 255] : PINE_LIGHT;
-  const pad = maskable ? 108 : 32;
-  const pw = (size - pad * 2) / 2 - 6 * u;
-  const top = pad + 22 * u;
-  const bottom = size - pad - 24 * u;
-  const ph = bottom - top;
-  const left = pad;
-  c.roundRect(left, top, pw, ph, 22 * u, ink);
-  c.roundRect(size - pad - pw, top, pw, ph, 22 * u, ink2);
-  c.roundRect(size / 2 - 5 * u, top - 6 * u, 10 * u, ph + 12 * u, 4 * u, maskable ? PINE : PAPER);
-  // 文字线
-  const lx = left + 26 * u;
-  const rx = size - pad - pw + 26 * u;
-  for (let i = 0; i < 3; i += 1) {
-    const y = top + (44 + i * 40) * u;
-    c.roundRect(lx, y, (i === 0 ? 84 : 66) * u, 11 * u, 5 * u, i === 0 ? GOLD : (maskable ? [0x8f, 0xa9, 0x9f, 255] : [0xdc, 0xe7, 0xe1, 255]));
-    c.roundRect(rx, y, (i === 0 ? 84 : 66) * u, 11 * u, 5 * u, i === 0 ? GOLD : (maskable ? [0x8f, 0xa9, 0x9f, 255] : [0xdc, 0xe7, 0xe1, 255]));
+  c.fill(PINE);
+  const glyphs = {
+    I:['11111','00100','00100','00100','00100','00100','11111'],
+    E:['11111','10000','10000','11110','10000','10000','11111'],
+    L:['10000','10000','10000','10000','10000','10000','11111'],
+    T:['11111','00100','00100','00100','00100','00100','00100'],
+    S:['11111','10000','10000','11111','00001','00001','11111'],
+  };
+  const cell=(maskable?10:13)*u;
+  const gap=cell;
+  const width=5*5*cell+4*gap;
+  const x0=(size-width)/2, y0=size/2-3.5*cell;
+  for(const [i,letter] of [...'IELTS'].entries()){
+    for(const [row,line] of glyphs[letter].entries())for(const [col,bit] of [...line].entries()){
+      if(bit==='1')c.roundRect(x0+i*6*cell+col*cell,y0+row*cell,cell*1.08,cell*1.08,0,PAPER);
+    }
   }
-  c.circle(size / 2, bottom - 32 * u, 13 * u, GOLD);
+  c.roundRect(size*0.22,size*0.72,size*0.56,8*u,4*u,GOLD);
   return c;
 }
 

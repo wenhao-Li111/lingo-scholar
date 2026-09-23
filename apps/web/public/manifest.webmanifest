@@ -1,6 +1,6 @@
 {
-  "name": "Lingo Scholar · 听词研习室",
-  "short_name": "听词研习室",
+  "name": "IELTS · 听词研习室",
+  "short_name": "IELTS 研习室",
   "description": "首页即背词，内置 openIELTS 资料全文检索、站内阅读与 IELTS 五级训练",
   "lang": "zh-CN",
   "start_url": "/#/home",

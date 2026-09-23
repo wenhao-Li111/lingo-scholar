@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './app';
 import { ToastProvider } from './ui';
 import './styles.css';
+import './study-finish.css';
 
 // 一级错误边界：避免单页异常导致整站白屏
 class Boundary extends React.Component<{ children: React.ReactNode }, { err: Error | null }> {

@@ -102,7 +102,7 @@ function TopBar({ me }: { me: Me }) {
     <header className="topbar">
       <div className="topbar-inner">
         <div className="brand">
-          <span className="brand-mark serif">Lingo&nbsp;Scholar</span>
+          <span className="brand-mark" aria-label="IELTS 听词研习室">IELTS<span className="brand-dot">.</span></span>
           <span className="brand-sub">听词研习室 · L{me.user.level}</span>
         </div>
         <div className="topbar-spacer" />
@@ -205,7 +205,7 @@ function AuthScreen({ needsSetup, onDone, route }: { needsSetup: boolean; onDone
   return (
     <div className="app-main stack" style={{ maxWidth: 520, margin: '0 auto', paddingTop: 40 }}>
       <div className="stack" style={{ gap: 6, textAlign: 'center', marginBottom: 8 }}>
-        <div className="brand-mark serif" style={{ fontSize: 26 }}>Lingo Scholar</div>
+        <div className="brand-mark" style={{ fontSize: 30 }}>IELTS<span className="brand-dot">.</span></div>
         <div className="muted small">听词研习室 · IELTS G 类听力与词汇训练</div>
       </div>
       <Card>
